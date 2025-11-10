@@ -10,7 +10,7 @@ import {
   InstrumentType,
   OrderSide,
   OrderType,
-} from "jsr:@public/deno-sdk";
+} from "jsr:@mnstrc4t/public-sdk";
 ```
 
 ### Quick Start
