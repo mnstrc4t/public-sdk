@@ -36,10 +36,12 @@ export function createHttpClient(config: HttpClientConfig) {
   async function request(
     method: string,
     endpoint: string,
-    options: RequestInit = {},
+    options: RequestInit = {}
   ): Promise<Record<string, unknown>> {
     const url = `${baseUrl}/${endpoint.replace(/^\//, "")}`;
-    const isRetryableMethod = ["GET", "HEAD", "OPTIONS"].includes(method.toUpperCase());
+    const isRetryableMethod = ["GET", "HEAD", "OPTIONS"].includes(
+      method.toUpperCase()
+    );
 
     const makeRequest = async () => {
       const controller = new AbortController();
@@ -66,21 +68,26 @@ export function createHttpClient(config: HttpClientConfig) {
         }
 
         if (!response.ok) {
-          const message = typeof data.message === "string" ? data.message : "Unknown error";
+          const message =
+            typeof data.message === "string" ? data.message : "Unknown error";
 
-          if (response.status === 401) throw new AuthenticationError(message, response.status, data);
-          if (response.status === 400) throw new ValidationError(message, response.status, data);
-          if (response.status === 404) throw new NotFoundError(message, response.status, data);
+          if (response.status === 401)
+            throw new AuthenticationError(message, response.status, data);
+          if (response.status === 400)
+            throw new ValidationError(message, response.status, data);
+          if (response.status === 404)
+            throw new NotFoundError(message, response.status, data);
           if (response.status === 429) {
             const retryAfter = response.headers.get("Retry-After");
             throw new RateLimitError(
               message,
               response.status,
               retryAfter ? parseInt(retryAfter) : undefined,
-              data,
+              data
             );
           }
-          if (response.status >= 500) throw new ServerError(message, response.status, data);
+          if (response.status >= 500)
+            throw new ServerError(message, response.status, data);
           throw new APIError(message, response.status, data);
         }
 
@@ -105,7 +112,8 @@ export function createHttpClient(config: HttpClientConfig) {
   }
 
   return {
-    setAuthHeader: (token: string) => headers.set("Authorization", `Bearer ${token}`),
+    setAuthHeader: (token: string) =>
+      headers.set("Authorization", `Bearer ${token}`),
     removeAuthHeader: () => headers.delete("Authorization"),
     get: (endpoint: string, params?: Record<string, unknown>) => {
       let url = endpoint;
@@ -120,12 +128,15 @@ export function createHttpClient(config: HttpClientConfig) {
       return request("GET", url);
     },
     post: (endpoint: string, data?: Record<string, unknown>) =>
-      request("POST", endpoint, { body: data ? JSON.stringify(data) : undefined }),
+      request("POST", endpoint, {
+        body: data ? JSON.stringify(data) : undefined,
+      }),
     put: (endpoint: string, data?: Record<string, unknown>) =>
-      request("PUT", endpoint, { body: data ? JSON.stringify(data) : undefined }),
+      request("PUT", endpoint, {
+        body: data ? JSON.stringify(data) : undefined,
+      }),
     delete: (endpoint: string) => request("DELETE", endpoint),
   };
 }
 
 export type HttpClient = ReturnType<typeof createHttpClient>;
-

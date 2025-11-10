@@ -1,6 +1,7 @@
 {
   "name": "@mnsrtc4t/public-sdk",
   "version": "0.1.2",
+  "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
     "@std/async": "jsr:@std/async@^1.0.0"

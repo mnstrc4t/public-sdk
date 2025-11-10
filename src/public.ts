@@ -211,6 +211,54 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
   };
 }
 
+export type PublicClient = {
+  getAccounts: () => Promise<Account[]>;
+  getPortfolio: (acctId?: string) => Promise<Record<string, unknown>>;
+  getHistory: (
+    request?: HistoryRequest,
+    acctId?: string
+  ) => Promise<Record<string, unknown>>;
+  getAllInstruments: (
+    request?: InstrumentsRequest
+  ) => Promise<Record<string, unknown>>;
+  getInstrument: (symbol: string, type: string) => Promise<Instrument>;
+  getQuotes: (
+    instruments: OrderInstrument[],
+    acctId?: string
+  ) => Promise<Quote[]>;
+  getOptionExpirations: (
+    request: OptionExpirationsRequest,
+    acctId?: string
+  ) => Promise<Record<string, unknown>>;
+  getOptionChain: (
+    request: OptionChainRequest,
+    acctId?: string
+  ) => Promise<Record<string, unknown>>;
+  getOptionGreeks: (
+    osiSymbol: string,
+    acctId?: string
+  ) => Promise<Record<string, unknown>>;
+  preflightOrder: (
+    request: PreflightRequest,
+    acctId?: string
+  ) => Promise<Record<string, unknown>>;
+  preflightMultiLeg: (
+    request: PreflightMultiLegRequest,
+    acctId?: string
+  ) => Promise<Record<string, unknown>>;
+  placeOrder: (request: OrderRequest, acctId?: string) => Promise<string>;
+  placeMultiLegOrder: (
+    request: MultilegOrderRequest,
+    acctId?: string
+  ) => Promise<string>;
+  getOrder: (orderId: string, acctId?: string) => Promise<Order>;
+  cancelOrder: (
+    orderId: string,
+    acctId?: string
+  ) => Promise<Record<string, unknown>>;
+  auth: { revoke: () => void };
+};
+
 export function createClient(config: {
   baseUrl?: string;
   accountId?: string;
@@ -228,7 +276,7 @@ export function createClient(config: {
           scope?: string;
         };
       };
-}) {
+}): PublicClient {
   const http = createHttpClient({
     baseUrl: config.baseUrl ?? "https://api.public.com",
     timeout: config.timeout,
@@ -244,13 +292,15 @@ export function createClient(config: {
 
   const api = createApiClient(http, { accountId: config.accountId });
 
-  const withAuth = <T extends (...args: Parameters<T>) => ReturnType<T>>(
+  const withAuth = <T extends (...args: any[]) => any>(
     fn: T
-  ) => {
-    return async (...args: Parameters<T>) => {
-      await auth.getToken();
-      return fn(...args);
-    };
+  ): ((...args: Parameters<T>) => ReturnType<T>) => {
+    return ((...args: Parameters<T>) => {
+      return (async () => {
+        await auth.getToken();
+        return fn(...args);
+      })();
+    }) as any;
   };
 
   return {
