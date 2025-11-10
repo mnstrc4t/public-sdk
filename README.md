@@ -2,7 +2,7 @@
 
 Minimal TypeScript SDK for the Public Trading REST API.
 
-## Installation
+### Installation
 
 ```typescript
 import {
@@ -13,7 +13,7 @@ import {
 } from "jsr:@public/deno-sdk";
 ```
 
-## Quick Start
+### Quick Start
 
 ```typescript
 const client = createClient({
@@ -38,31 +38,7 @@ await client.placeOrder({
 });
 ```
 
-## Authentication
-
-**API Key:**
-
-```typescript
-createClient({
-  auth: { apiKey: "YOUR_SECRET_KEY", validityMinutes: 15 },
-  accountId: "YOUR_ACCOUNT_ID",
-});
-```
-
-**OAuth:**
-
-```typescript
-createClient({
-  auth: {
-    oauth: {
-      clientId: "YOUR_CLIENT_ID",
-      redirectUri: "http://localhost:8000/callback",
-    },
-  },
-});
-```
-
-## API Methods
+### Methods
 
 | Method                                      | HTTP   | Description                 |
 | ------------------------------------------- | ------ | --------------------------- |
