@@ -4,4 +4,3 @@ export interface HistoryRequest {
   pageSize?: number;
   nextToken?: string;
 }
-

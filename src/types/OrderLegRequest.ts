@@ -1,6 +1,6 @@
-import { LegInstrument } from "./LegInstrument.ts";
-import { OrderSide } from "../enums/OrderSide.ts";
-import { OpenCloseIndicator } from "../enums/OpenCloseIndicator.ts";
+import type { LegInstrument } from "./LegInstrument.ts";
+import type { OrderSide } from "../enums/OrderSide.ts";
+import type { OpenCloseIndicator } from "../enums/OpenCloseIndicator.ts";
 
 export interface OrderLegRequest {
   instrument: LegInstrument;
@@ -8,4 +8,3 @@ export interface OrderLegRequest {
   openCloseIndicator?: OpenCloseIndicator;
   ratioQuantity?: number;
 }
-

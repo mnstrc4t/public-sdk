@@ -1,6 +1,6 @@
-import { OrderType } from "../enums/OrderType.ts";
-import { OrderExpirationRequest } from "./OrderExpirationRequest.ts";
-import { OrderLegRequest } from "./OrderLegRequest.ts";
+import type { OrderType } from "../enums/OrderType.ts";
+import type { OrderExpirationRequest } from "./OrderExpirationRequest.ts";
+import type { OrderLegRequest } from "./OrderLegRequest.ts";
 
 export interface PreflightMultiLegRequest {
   orderType: OrderType;
@@ -9,4 +9,3 @@ export interface PreflightMultiLegRequest {
   limitPrice: string;
   legs: OrderLegRequest[];
 }
-

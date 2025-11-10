@@ -1,10 +1,10 @@
-import { OrderInstrument } from "./OrderInstrument.ts";
-import { OrderType } from "../enums/OrderType.ts";
-import { OrderSide } from "../enums/OrderSide.ts";
-import { OrderStatus } from "../enums/OrderStatus.ts";
-import { TimeInForce } from "../enums/TimeInForce.ts";
-import { OpenCloseIndicator } from "../enums/OpenCloseIndicator.ts";
-import { LegInstrumentType } from "../enums/LegInstrumentType.ts";
+import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { OrderType } from "../enums/OrderType.ts";
+import type { OrderSide } from "../enums/OrderSide.ts";
+import type { OrderStatus } from "../enums/OrderStatus.ts";
+import type { TimeInForce } from "../enums/TimeInForce.ts";
+import type { OpenCloseIndicator } from "../enums/OpenCloseIndicator.ts";
+import type { LegInstrumentType } from "../enums/LegInstrumentType.ts";
 
 export interface Order {
   orderId: string;
@@ -30,4 +30,3 @@ export interface Order {
   }>;
   rejectReason?: string;
 }
-

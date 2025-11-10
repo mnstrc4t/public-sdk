@@ -1,5 +1,5 @@
-import { OrderInstrument } from "./OrderInstrument.ts";
-import { Trading } from "../enums/Trading.ts";
+import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { Trading } from "../enums/Trading.ts";
 
 export interface Instrument {
   instrument: OrderInstrument;

@@ -1,5 +1,5 @@
-import { InstrumentType } from "../enums/InstrumentType.ts";
-import { Trading } from "../enums/Trading.ts";
+import type { InstrumentType } from "../enums/InstrumentType.ts";
+import type { Trading } from "../enums/Trading.ts";
 
 export interface InstrumentsRequest {
   typeFilter?: InstrumentType[];
@@ -8,4 +8,3 @@ export interface InstrumentsRequest {
   optionTradingFilter?: Trading[];
   optionSpreadTradingFilter?: Trading[];
 }
-

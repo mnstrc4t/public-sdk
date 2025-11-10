@@ -1,4 +1,4 @@
-import { AccountType } from "../enums/AccountType.ts";
+import type { AccountType } from "../enums/AccountType.ts";
 
 export interface Account {
   accountId: string;
@@ -7,4 +7,3 @@ export interface Account {
   brokerageAccountType?: string;
   tradePermissions?: string;
 }
-

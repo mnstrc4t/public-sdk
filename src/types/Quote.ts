@@ -1,5 +1,5 @@
-import { OrderInstrument } from "./OrderInstrument.ts";
-import { QuoteOutcome } from "../enums/QuoteOutcome.ts";
+import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { QuoteOutcome } from "../enums/QuoteOutcome.ts";
 
 export interface Quote {
   instrument: OrderInstrument;
@@ -15,4 +15,3 @@ export interface Quote {
   volume?: number;
   openInterest?: number;
 }
-

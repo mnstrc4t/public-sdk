@@ -1,5 +1,5 @@
 {
-  "name": "@public/deno-sdk",
+  "name": "@mnsrtc4t/public-sdk",
   "version": "0.1.2",
   "exports": "./mod.ts",
   "imports": {

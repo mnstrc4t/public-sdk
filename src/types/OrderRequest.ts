@@ -1,8 +1,8 @@
-import { OrderInstrument } from "./OrderInstrument.ts";
-import { OrderSide } from "../enums/OrderSide.ts";
-import { OrderType } from "../enums/OrderType.ts";
-import { OrderExpirationRequest } from "./OrderExpirationRequest.ts";
-import { OpenCloseIndicator } from "../enums/OpenCloseIndicator.ts";
+import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { OrderSide } from "../enums/OrderSide.ts";
+import type { OrderType } from "../enums/OrderType.ts";
+import type { OrderExpirationRequest } from "./OrderExpirationRequest.ts";
+import type { OpenCloseIndicator } from "../enums/OpenCloseIndicator.ts";
 
 export interface OrderRequest {
   orderId: string;
@@ -16,4 +16,3 @@ export interface OrderRequest {
   stopPrice?: string;
   openCloseIndicator?: OpenCloseIndicator;
 }
-

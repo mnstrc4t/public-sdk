@@ -1,6 +1,6 @@
-import { OrderType } from "../enums/OrderType.ts";
-import { OrderExpirationRequest } from "./OrderExpirationRequest.ts";
-import { OrderLegRequest } from "./OrderLegRequest.ts";
+import type { OrderType } from "../enums/OrderType.ts";
+import type { OrderExpirationRequest } from "./OrderExpirationRequest.ts";
+import type { OrderLegRequest } from "./OrderLegRequest.ts";
 
 export interface MultilegOrderRequest {
   orderId: string;
@@ -10,4 +10,3 @@ export interface MultilegOrderRequest {
   expiration: OrderExpirationRequest;
   legs: OrderLegRequest[];
 }
-
