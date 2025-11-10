@@ -1,0 +1,6 @@
+export enum Trading {
+  BUY_AND_SELL = "BUY_AND_SELL",
+  LIQUIDATION_ONLY = "LIQUIDATION_ONLY",
+  DISABLED = "DISABLED",
+}
+
