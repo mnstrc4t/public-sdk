@@ -33,33 +33,16 @@ export function createHttpClient(config: HttpClientConfig) {
   const maxRetries = config.maxRetries ?? 3;
   const minTimeout = config.retryBackoff ?? 300;
   const maxTimeout = config.maxRetryTimeout ?? 15000;
-  const maxRequestsPerSecond = config.maxRequestsPerSecond ?? 5;
-
-  const requestTimestamps: number[] = [];
-  let throttleQueue = Promise.resolve();
+  const interval = 1000 / (config.maxRequestsPerSecond ?? 5);
+  let nextSlot = 0;
 
   function throttle(): Promise<void> {
-    throttleQueue = throttleQueue.then(async () => {
-      const now = Date.now();
-      while (requestTimestamps.length > 0 && requestTimestamps[0] <= now - 1000) {
-        requestTimestamps.shift();
-      }
-      if (requestTimestamps.length >= maxRequestsPerSecond) {
-        const waitTime = requestTimestamps[0] + 1000 - now;
-        if (waitTime > 0) {
-          await new Promise((resolve) => setTimeout(resolve, waitTime));
-        }
-        const nowAfter = Date.now();
-        while (
-          requestTimestamps.length > 0 &&
-          requestTimestamps[0] <= nowAfter - 1000
-        ) {
-          requestTimestamps.shift();
-        }
-      }
-      requestTimestamps.push(Date.now());
-    });
-    return throttleQueue;
+    const now = Date.now();
+    nextSlot = Math.max(now, nextSlot) + interval;
+    const delay = nextSlot - interval - now;
+    return delay > 0
+      ? new Promise((resolve) => setTimeout(resolve, delay))
+      : Promise.resolve();
   }
 
   function request(
