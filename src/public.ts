@@ -5,11 +5,16 @@ import type { HistoryRequest } from "./types/HistoryRequest.ts";
 import type { Instrument } from "./types/Instrument.ts";
 import type { InstrumentsRequest } from "./types/InstrumentsRequest.ts";
 import type { MultilegOrderRequest } from "./types/MultilegOrderRequest.ts";
+import type { OptionChain } from "./types/OptionChain.ts";
 import type { OptionChainRequest } from "./types/OptionChainRequest.ts";
+import type { OptionExpirations } from "./types/OptionExpirations.ts";
 import type { OptionExpirationsRequest } from "./types/OptionExpirationsRequest.ts";
+import type { OptionGreeksRequest } from "./types/OptionGreeksRequest.ts";
+import type { OptionGreeksResponse } from "./types/OptionGreeks.ts";
 import type { Order } from "./types/Order.ts";
 import type { OrderInstrument } from "./types/OrderInstrument.ts";
 import type { OrderRequest } from "./types/OrderRequest.ts";
+import type { Portfolio } from "./types/Portfolio.ts";
 import type { PreflightMultiLegRequest } from "./types/PreflightMultiLegRequest.ts";
 import type { PreflightRequest } from "./types/PreflightRequest.ts";
 import type { Quote } from "./types/Quote.ts";
@@ -22,7 +27,7 @@ interface ApiKeyAuth {
 function createApiKeyAuth(
   client: HttpClient,
   secretKey: string,
-  validityMinutes = 15
+  validityMinutes = 15,
 ): ApiKeyAuth {
   if (validityMinutes < 5 || validityMinutes > 1440) {
     throw new Error("Validity must be between 5 and 1440 minutes");
@@ -39,7 +44,7 @@ function createApiKeyAuth(
       {
         secret: secretKey,
         validityInMinutes: validityMinutes,
-      }
+      },
     )) as { accessToken?: string };
 
     token = response.accessToken ?? null;
@@ -95,9 +100,10 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
       return (res as { accounts: Account[] }).accounts;
     },
 
-    getPortfolio: (acctId?: string) => {
+    getPortfolio: async (acctId?: string) => {
       const id = requireAccountId(acctId);
-      return http.get(`userapigateway/trading/${id}/portfolio/v2`);
+      const res = await http.get(`userapigateway/trading/${id}/portfolio/v2`);
+      return res as unknown as Portfolio;
     },
 
     getHistory: (request?: HistoryRequest, acctId?: string) => {
@@ -117,7 +123,7 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
 
     getInstrument: async (symbol: string, type: string) => {
       const res = await http.get(
-        `userapigateway/trading/instruments/${symbol}/${type}`
+        `userapigateway/trading/instruments/${symbol}/${type}`,
       );
       return res as unknown as Instrument;
     },
@@ -133,37 +139,44 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
       return ((res as { quotes?: Quote[] }).quotes ?? []) as Quote[];
     },
 
-    getOptionExpirations: (
+    getOptionExpirations: async (
       request: OptionExpirationsRequest,
-      acctId?: string
+      acctId?: string,
     ) => {
       const id = requireAccountId(acctId);
-      return http.post(
+      const res = await http.post(
         `userapigateway/marketdata/${id}/option-expirations`,
-        toParams(request as unknown as Record<string, unknown>)
+        toParams(request as unknown as Record<string, unknown>),
       );
+      return res as unknown as OptionExpirations;
     },
 
-    getOptionChain: (request: OptionChainRequest, acctId?: string) => {
+    getOptionChain: async (request: OptionChainRequest, acctId?: string) => {
       const id = requireAccountId(acctId);
-      return http.post(
+      const res = await http.post(
         `userapigateway/marketdata/${id}/option-chain`,
-        toParams(request as unknown as Record<string, unknown>)
+        toParams(request as unknown as Record<string, unknown>),
       );
+      return res as unknown as OptionChain;
     },
 
-    getOptionGreeks: (osiSymbol: string, acctId?: string) => {
+    getOptionGreeks: async (
+      request: OptionGreeksRequest,
+      acctId?: string,
+    ) => {
       const id = requireAccountId(acctId);
-      return http.get(
-        `userapigateway/option-details/${id}/${osiSymbol}/greeks`
+      const res = await http.get(
+        `userapigateway/option-details/${id}/greeks`,
+        toParams(request as unknown as Record<string, unknown>),
       );
+      return res as unknown as OptionGreeksResponse;
     },
 
     preflightOrder: (request: PreflightRequest, acctId?: string) => {
       const id = requireAccountId(acctId);
       return http.post(
         `userapigateway/trading/${id}/preflight/single-leg`,
-        toParams(request as unknown as Record<string, unknown>)
+        toParams(request as unknown as Record<string, unknown>),
       );
     },
 
@@ -171,7 +184,7 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
       const id = requireAccountId(acctId);
       return http.post(
         `userapigateway/trading/${id}/preflight/multi-leg`,
-        toParams(request as unknown as Record<string, unknown>)
+        toParams(request as unknown as Record<string, unknown>),
       );
     },
 
@@ -179,19 +192,19 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
       const id = requireAccountId(acctId);
       const res = await http.post(
         `userapigateway/trading/${id}/order`,
-        toParams(request as unknown as Record<string, unknown>)
+        toParams(request as unknown as Record<string, unknown>),
       );
       return (res as { orderId: string }).orderId;
     },
 
     placeMultiLegOrder: async (
       request: MultilegOrderRequest,
-      acctId?: string
+      acctId?: string,
     ) => {
       const id = requireAccountId(acctId);
       const res = await http.post(
         `userapigateway/trading/${id}/order/multileg`,
-        toParams(request as unknown as Record<string, unknown>)
+        toParams(request as unknown as Record<string, unknown>),
       );
       return (res as { orderId: string }).orderId;
     },
@@ -199,7 +212,7 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
     getOrder: async (orderId: string, acctId?: string) => {
       const id = requireAccountId(acctId);
       const res = await http.get(
-        `userapigateway/trading/${id}/order/${orderId}`
+        `userapigateway/trading/${id}/order/${orderId}`,
       );
       return res as unknown as Order;
     },
@@ -213,48 +226,48 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
 
 export type PublicClient = {
   getAccounts: () => Promise<Account[]>;
-  getPortfolio: (acctId?: string) => Promise<Record<string, unknown>>;
+  getPortfolio: (acctId?: string) => Promise<Portfolio>;
   getHistory: (
     request?: HistoryRequest,
-    acctId?: string
+    acctId?: string,
   ) => Promise<Record<string, unknown>>;
   getAllInstruments: (
-    request?: InstrumentsRequest
+    request?: InstrumentsRequest,
   ) => Promise<Record<string, unknown>>;
   getInstrument: (symbol: string, type: string) => Promise<Instrument>;
   getQuotes: (
     instruments: OrderInstrument[],
-    acctId?: string
+    acctId?: string,
   ) => Promise<Quote[]>;
   getOptionExpirations: (
     request: OptionExpirationsRequest,
-    acctId?: string
-  ) => Promise<Record<string, unknown>>;
+    acctId?: string,
+  ) => Promise<OptionExpirations>;
   getOptionChain: (
     request: OptionChainRequest,
-    acctId?: string
-  ) => Promise<Record<string, unknown>>;
+    acctId?: string,
+  ) => Promise<OptionChain>;
   getOptionGreeks: (
-    osiSymbol: string,
-    acctId?: string
-  ) => Promise<Record<string, unknown>>;
+    request: OptionGreeksRequest,
+    acctId?: string,
+  ) => Promise<OptionGreeksResponse>;
   preflightOrder: (
     request: PreflightRequest,
-    acctId?: string
+    acctId?: string,
   ) => Promise<Record<string, unknown>>;
   preflightMultiLeg: (
     request: PreflightMultiLegRequest,
-    acctId?: string
+    acctId?: string,
   ) => Promise<Record<string, unknown>>;
   placeOrder: (request: OrderRequest, acctId?: string) => Promise<string>;
   placeMultiLegOrder: (
     request: MultilegOrderRequest,
-    acctId?: string
+    acctId?: string,
   ) => Promise<string>;
   getOrder: (orderId: string, acctId?: string) => Promise<Order>;
   cancelOrder: (
     orderId: string,
-    acctId?: string
+    acctId?: string,
   ) => Promise<Record<string, unknown>>;
   auth: { revoke: () => void };
 };
@@ -270,13 +283,13 @@ export function createClient(config: {
   auth:
     | { apiKey: string; validityMinutes?: number }
     | {
-        oauth: {
-          clientId: string;
-          redirectUri: string;
-          clientSecret?: string;
-          scope?: string;
-        };
+      oauth: {
+        clientId: string;
+        redirectUri: string;
+        clientSecret?: string;
+        scope?: string;
       };
+    };
 }): PublicClient {
   const http = createHttpClient({
     baseUrl: config.baseUrl ?? "https://api.public.com",
@@ -287,15 +300,14 @@ export function createClient(config: {
     maxRequestsPerSecond: config.maxRequestsPerSecond,
   });
 
-  const auth =
-    "apiKey" in config.auth
-      ? createApiKeyAuth(http, config.auth.apiKey, config.auth.validityMinutes)
-      : createOAuthAuth(http, config.auth.oauth);
+  const auth = "apiKey" in config.auth
+    ? createApiKeyAuth(http, config.auth.apiKey, config.auth.validityMinutes)
+    : createOAuthAuth(http, config.auth.oauth);
 
   const api = createApiClient(http, { accountId: config.accountId });
 
   const withAuth = <A extends unknown[], R>(
-    fn: (...args: A) => Promise<R>
+    fn: (...args: A) => Promise<R>,
   ): ((...args: A) => Promise<R>) => {
     return (...args: A) => {
       return (async () => {

@@ -33,6 +33,7 @@ export function createHttpClient(config: HttpClientConfig) {
   const maxRetries = config.maxRetries ?? 3;
   const minTimeout = config.retryBackoff ?? 300;
   const maxTimeout = config.maxRetryTimeout ?? 15000;
+
   const interval = 1000 / (config.maxRequestsPerSecond ?? 5);
   let nextSlot = 0;
 

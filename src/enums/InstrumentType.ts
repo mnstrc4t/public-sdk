@@ -8,4 +8,3 @@ export enum InstrumentType {
   OPTION = "OPTION",
   TREASURY = "TREASURY",
 }
-
