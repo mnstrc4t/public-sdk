@@ -266,6 +266,7 @@ export function createClient(config: {
   maxRetries?: number;
   retryBackoff?: number;
   maxRetryTimeout?: number;
+  maxRequestsPerSecond?: number;
   auth:
     | { apiKey: string; validityMinutes?: number }
     | {
@@ -283,6 +284,7 @@ export function createClient(config: {
     maxRetries: config.maxRetries,
     retryBackoff: config.retryBackoff,
     maxRetryTimeout: config.maxRetryTimeout,
+    maxRequestsPerSecond: config.maxRequestsPerSecond,
   });
 
   const auth =
@@ -292,15 +294,15 @@ export function createClient(config: {
 
   const api = createApiClient(http, { accountId: config.accountId });
 
-  const withAuth = <T extends (...args: any[]) => any>(
-    fn: T
-  ): ((...args: Parameters<T>) => ReturnType<T>) => {
-    return ((...args: Parameters<T>) => {
+  const withAuth = <A extends unknown[], R>(
+    fn: (...args: A) => Promise<R>
+  ): ((...args: A) => Promise<R>) => {
+    return (...args: A) => {
       return (async () => {
         await auth.getToken();
-        return fn(...args);
+        return await fn(...args);
       })();
-    }) as any;
+    };
   };
 
   return {

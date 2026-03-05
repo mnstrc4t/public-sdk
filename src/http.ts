@@ -17,6 +17,7 @@ interface HttpClientConfig {
   maxRetries?: number;
   retryBackoff?: number;
   maxRetryTimeout?: number;
+  maxRequestsPerSecond?: number;
 }
 
 export function createHttpClient(config: HttpClientConfig) {
@@ -32,8 +33,36 @@ export function createHttpClient(config: HttpClientConfig) {
   const maxRetries = config.maxRetries ?? 3;
   const minTimeout = config.retryBackoff ?? 300;
   const maxTimeout = config.maxRetryTimeout ?? 15000;
+  const maxRequestsPerSecond = config.maxRequestsPerSecond ?? 5;
 
-  async function request(
+  const requestTimestamps: number[] = [];
+  let throttleQueue = Promise.resolve();
+
+  function throttle(): Promise<void> {
+    throttleQueue = throttleQueue.then(async () => {
+      const now = Date.now();
+      while (requestTimestamps.length > 0 && requestTimestamps[0] <= now - 1000) {
+        requestTimestamps.shift();
+      }
+      if (requestTimestamps.length >= maxRequestsPerSecond) {
+        const waitTime = requestTimestamps[0] + 1000 - now;
+        if (waitTime > 0) {
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
+        }
+        const nowAfter = Date.now();
+        while (
+          requestTimestamps.length > 0 &&
+          requestTimestamps[0] <= nowAfter - 1000
+        ) {
+          requestTimestamps.shift();
+        }
+      }
+      requestTimestamps.push(Date.now());
+    });
+    return throttleQueue;
+  }
+
+  function request(
     method: string,
     endpoint: string,
     options: RequestInit = {}
@@ -44,6 +73,7 @@ export function createHttpClient(config: HttpClientConfig) {
     );
 
     const makeRequest = async () => {
+      await throttle();
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
 

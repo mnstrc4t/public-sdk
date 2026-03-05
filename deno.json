@@ -1,6 +1,6 @@
 {
   "name": "@mnstrc4t/public-sdk",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
