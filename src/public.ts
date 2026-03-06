@@ -1,6 +1,7 @@
 import { createHttpClient, type HttpClient } from "./http.ts";
 import { createOAuthAuth } from "./oauth.ts";
 import type { Account } from "./types/Account.ts";
+import type { History } from "./types/History.ts";
 import type { HistoryRequest } from "./types/HistoryRequest.ts";
 import type { Instrument } from "./types/Instrument.ts";
 import type { InstrumentsRequest } from "./types/InstrumentsRequest.ts";
@@ -106,12 +107,15 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
       return res as unknown as Portfolio;
     },
 
-    getHistory: (request?: HistoryRequest, acctId?: string) => {
+    getHistory: async (request?: HistoryRequest, acctId?: string) => {
       const id = requireAccountId(acctId);
       const params = request
         ? toParams(request as Record<string, unknown>)
         : undefined;
-      return http.get(`userapigateway/trading/${id}/history`, params);
+      return (await http.get(
+        `userapigateway/trading/${id}/history`,
+        params,
+      )) as unknown as History;
     },
 
     getAllInstruments: (request?: InstrumentsRequest) => {
@@ -230,7 +234,7 @@ export type PublicClient = {
   getHistory: (
     request?: HistoryRequest,
     acctId?: string,
-  ) => Promise<Record<string, unknown>>;
+  ) => Promise<History>;
   getAllInstruments: (
     request?: InstrumentsRequest,
   ) => Promise<Record<string, unknown>>;

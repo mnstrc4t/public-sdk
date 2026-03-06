@@ -1,4 +1,5 @@
 export * from "./Account.ts";
+export * from "./History.ts";
 export * from "./HistoryRequest.ts";
 export * from "./Instrument.ts";
 export * from "./InstrumentsRequest.ts";
