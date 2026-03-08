@@ -1,6 +1,6 @@
-import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { Instrument } from "./Instrument.ts";
 
 export interface OptionChainRequest {
-  instrument: OrderInstrument;
+  instrument: Instrument;
   expirationDate: string;
 }

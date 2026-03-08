@@ -4,6 +4,7 @@ import type { Account } from "./types/Account.ts";
 import type { History } from "./types/History.ts";
 import type { HistoryRequest } from "./types/HistoryRequest.ts";
 import type { Instrument } from "./types/Instrument.ts";
+import type { InstrumentDetails } from "./types/InstrumentDetails.ts";
 import type { InstrumentsRequest } from "./types/InstrumentsRequest.ts";
 import type { MultilegOrderRequest } from "./types/MultilegOrderRequest.ts";
 import type { OptionChain } from "./types/OptionChain.ts";
@@ -13,7 +14,6 @@ import type { OptionExpirationsRequest } from "./types/OptionExpirationsRequest.
 import type { OptionGreeksRequest } from "./types/OptionGreeksRequest.ts";
 import type { OptionGreeksResponse } from "./types/OptionGreeks.ts";
 import type { Order } from "./types/Order.ts";
-import type { OrderInstrument } from "./types/OrderInstrument.ts";
 import type { OrderRequest } from "./types/OrderRequest.ts";
 import type { Portfolio } from "./types/Portfolio.ts";
 import type { PreflightMultiLegRequest } from "./types/PreflightMultiLegRequest.ts";
@@ -129,10 +129,10 @@ function createApiClient(http: HttpClient, config: { accountId?: string }) {
       const res = await http.get(
         `userapigateway/trading/instruments/${symbol}/${type}`,
       );
-      return res as unknown as Instrument;
+      return res as unknown as InstrumentDetails;
     },
 
-    getQuotes: async (instruments: OrderInstrument[], acctId?: string) => {
+    getQuotes: async (instruments: Instrument[], acctId?: string) => {
       const id = requireAccountId(acctId);
       const res = await http.post(`userapigateway/marketdata/${id}/quotes`, {
         instruments: instruments.map((i) => ({
@@ -238,9 +238,9 @@ export type PublicClient = {
   getAllInstruments: (
     request?: InstrumentsRequest,
   ) => Promise<Record<string, unknown>>;
-  getInstrument: (symbol: string, type: string) => Promise<Instrument>;
+  getInstrument: (symbol: string, type: string) => Promise<InstrumentDetails>;
   getQuotes: (
-    instruments: OrderInstrument[],
+    instruments: Instrument[],
     acctId?: string,
   ) => Promise<Quote[]>;
   getOptionExpirations: (

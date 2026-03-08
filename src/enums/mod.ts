@@ -1,7 +1,6 @@
 export * from "./AccountType.ts";
 export * from "./EquityMarketSession.ts";
 export * from "./InstrumentType.ts";
-export * from "./LegInstrumentType.ts";
 export * from "./OpenCloseIndicator.ts";
 export * from "./OrderSide.ts";
 export * from "./OrderStatus.ts";

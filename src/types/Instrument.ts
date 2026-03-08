@@ -1,11 +1,6 @@
-import type { OrderInstrument } from "./OrderInstrument.ts";
-import type { Trading } from "../enums/Trading.ts";
+import type { InstrumentType } from "../enums/InstrumentType.ts";
 
 export interface Instrument {
-  instrument: OrderInstrument;
-  trading: Trading;
-  fractionalTrading: Trading;
-  optionTrading: Trading;
-  optionSpreadTrading: Trading;
+  symbol: string;
+  type: InstrumentType;
 }
-

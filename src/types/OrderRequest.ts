@@ -1,4 +1,4 @@
-import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { Instrument } from "./Instrument.ts";
 import type { OrderSide } from "../enums/OrderSide.ts";
 import type { OrderType } from "../enums/OrderType.ts";
 import type { OrderExpirationRequest } from "./OrderExpirationRequest.ts";
@@ -7,7 +7,7 @@ import type { EquityMarketSession } from "../enums/EquityMarketSession.ts";
 
 export interface OrderRequest {
   orderId: string;
-  instrument: OrderInstrument;
+  instrument: Instrument;
   orderSide: OrderSide;
   orderType: OrderType;
   expiration: OrderExpirationRequest;

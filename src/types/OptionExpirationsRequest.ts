@@ -1,5 +1,5 @@
-import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { Instrument } from "./Instrument.ts";
 
 export interface OptionExpirationsRequest {
-  instrument: OrderInstrument;
+  instrument: Instrument;
 }

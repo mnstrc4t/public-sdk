@@ -1,8 +1,8 @@
-import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { Instrument } from "./Instrument.ts";
 import type { QuoteOutcome } from "../enums/QuoteOutcome.ts";
 
 export interface Quote {
-  instrument: OrderInstrument;
+  instrument: Instrument;
   outcome: QuoteOutcome;
   last?: string;
   lastTimestamp?: string;

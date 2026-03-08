@@ -1,14 +1,13 @@
-import type { OrderInstrument } from "./OrderInstrument.ts";
+import type { Instrument } from "./Instrument.ts";
 import type { OrderType } from "../enums/OrderType.ts";
 import type { OrderSide } from "../enums/OrderSide.ts";
 import type { OrderStatus } from "../enums/OrderStatus.ts";
 import type { TimeInForce } from "../enums/TimeInForce.ts";
 import type { OpenCloseIndicator } from "../enums/OpenCloseIndicator.ts";
-import type { LegInstrumentType } from "../enums/LegInstrumentType.ts";
 
 export interface Order {
   orderId: string;
-  instrument: OrderInstrument;
+  instrument: Instrument;
   createdAt?: string;
   type: OrderType;
   side: OrderSide;
@@ -23,7 +22,7 @@ export interface Order {
   filledQuantity?: string;
   averagePrice?: string;
   legs?: Array<{
-    instrument: { symbol: string; type: LegInstrumentType };
+    instrument: Instrument;
     side: OrderSide;
     openCloseIndicator?: OpenCloseIndicator;
     ratioQuantity?: number;
